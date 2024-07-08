@@ -1,0 +1,32 @@
+{
+  "applications": "*",
+  "changelogDate": "20240708071901",
+  "dto": "no",
+  "embedded": false,
+  "entityTableName": "trader",
+  "fields": [
+    {
+      "fieldName": "name",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "nidNumber",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "tIN",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "licenseNumber",
+      "fieldType": "String"
+    }
+  ],
+  "fluentMethods": true,
+  "jpaMetamodelFiltering": true,
+  "name": "Trader",
+  "pagination": "pagination",
+  "readOnly": false,
+  "relationships": [],
+  "service": "serviceClass"
+}

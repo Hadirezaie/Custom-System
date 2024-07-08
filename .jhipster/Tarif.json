@@ -1,0 +1,35 @@
+{
+  "applications": "*",
+  "changelogDate": "20240708071904",
+  "dto": "no",
+  "embedded": false,
+  "entityTableName": "tarif",
+  "fields": [
+    {
+      "fieldName": "amount",
+      "fieldType": "Long"
+    },
+    {
+      "fieldName": "paidDate",
+      "fieldType": "LocalDate"
+    },
+    {
+      "fieldName": "paid",
+      "fieldType": "Boolean"
+    }
+  ],
+  "fluentMethods": true,
+  "jpaMetamodelFiltering": true,
+  "name": "Tarif",
+  "pagination": "pagination",
+  "readOnly": false,
+  "relationships": [
+    {
+      "otherEntityName": "device",
+      "ownerSide": true,
+      "relationshipName": "device",
+      "relationshipType": "one-to-one"
+    }
+  ],
+  "service": "serviceClass"
+}

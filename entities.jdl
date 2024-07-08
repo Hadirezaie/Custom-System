@@ -1,0 +1,41 @@
+entity Trader{
+    name String
+    NidNumber String
+    TIN  String
+    LicenseNumber   String
+}
+
+entity Imei {
+    imeiNumber Long
+}
+
+entity Device {
+    serialNumber String required
+    modelNumber String required
+}
+
+entity Tarif {
+    amount Long
+    paidDate LocalDate
+    paid Boolean
+}
+
+entity CustomCharges{
+    deviceModel  String
+    customFee    Long
+}
+
+relationship ManyToOne {
+    Imei {device} to Device
+     Device {trader} to Trader
+}
+
+
+
+relationship OneToOne {
+    Tarif {device} to Device
+   
+}
+
+filter *
+paginate * with pagination
