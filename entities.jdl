@@ -18,6 +18,7 @@ entity Tarif {
     amount Long
     paidDate LocalDate
     paid Boolean
+    numberOfDevice Long
 }
 
 entity CustomCharges{
@@ -29,12 +30,8 @@ relationship ManyToOne {
     Imei {device} to Device
      Device {trader} to Trader
 }
-
-
-
-relationship OneToOne {
-    Tarif {device} to Device
-   
+relationship OneToMany {
+    Tarif {device} to Device   
 }
 
 filter *

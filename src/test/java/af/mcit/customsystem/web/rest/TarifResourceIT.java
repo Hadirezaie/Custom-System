@@ -44,6 +44,10 @@ class TarifResourceIT {
     private static final Boolean DEFAULT_PAID = false;
     private static final Boolean UPDATED_PAID = true;
 
+    private static final Long DEFAULT_NUMBER_OF_DEVICE = 1L;
+    private static final Long UPDATED_NUMBER_OF_DEVICE = 2L;
+    private static final Long SMALLER_NUMBER_OF_DEVICE = 1L - 1L;
+
     private static final String ENTITY_API_URL = "/api/tarifs";
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
 
@@ -68,7 +72,11 @@ class TarifResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static Tarif createEntity(EntityManager em) {
-        Tarif tarif = new Tarif().amount(DEFAULT_AMOUNT).paidDate(DEFAULT_PAID_DATE).paid(DEFAULT_PAID);
+        Tarif tarif = new Tarif()
+            .amount(DEFAULT_AMOUNT)
+            .paidDate(DEFAULT_PAID_DATE)
+            .paid(DEFAULT_PAID)
+            .numberOfDevice(DEFAULT_NUMBER_OF_DEVICE);
         return tarif;
     }
 
@@ -79,7 +87,11 @@ class TarifResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static Tarif createUpdatedEntity(EntityManager em) {
-        Tarif tarif = new Tarif().amount(UPDATED_AMOUNT).paidDate(UPDATED_PAID_DATE).paid(UPDATED_PAID);
+        Tarif tarif = new Tarif()
+            .amount(UPDATED_AMOUNT)
+            .paidDate(UPDATED_PAID_DATE)
+            .paid(UPDATED_PAID)
+            .numberOfDevice(UPDATED_NUMBER_OF_DEVICE);
         return tarif;
     }
 
@@ -104,6 +116,7 @@ class TarifResourceIT {
         assertThat(testTarif.getAmount()).isEqualTo(DEFAULT_AMOUNT);
         assertThat(testTarif.getPaidDate()).isEqualTo(DEFAULT_PAID_DATE);
         assertThat(testTarif.getPaid()).isEqualTo(DEFAULT_PAID);
+        assertThat(testTarif.getNumberOfDevice()).isEqualTo(DEFAULT_NUMBER_OF_DEVICE);
     }
 
     @Test
@@ -138,7 +151,8 @@ class TarifResourceIT {
             .andExpect(jsonPath("$.[*].id").value(hasItem(tarif.getId().intValue())))
             .andExpect(jsonPath("$.[*].amount").value(hasItem(DEFAULT_AMOUNT.intValue())))
             .andExpect(jsonPath("$.[*].paidDate").value(hasItem(DEFAULT_PAID_DATE.toString())))
-            .andExpect(jsonPath("$.[*].paid").value(hasItem(DEFAULT_PAID.booleanValue())));
+            .andExpect(jsonPath("$.[*].paid").value(hasItem(DEFAULT_PAID.booleanValue())))
+            .andExpect(jsonPath("$.[*].numberOfDevice").value(hasItem(DEFAULT_NUMBER_OF_DEVICE.intValue())));
     }
 
     @Test
@@ -155,7 +169,8 @@ class TarifResourceIT {
             .andExpect(jsonPath("$.id").value(tarif.getId().intValue()))
             .andExpect(jsonPath("$.amount").value(DEFAULT_AMOUNT.intValue()))
             .andExpect(jsonPath("$.paidDate").value(DEFAULT_PAID_DATE.toString()))
-            .andExpect(jsonPath("$.paid").value(DEFAULT_PAID.booleanValue()));
+            .andExpect(jsonPath("$.paid").value(DEFAULT_PAID.booleanValue()))
+            .andExpect(jsonPath("$.numberOfDevice").value(DEFAULT_NUMBER_OF_DEVICE.intValue()));
     }
 
     @Test
@@ -399,6 +414,97 @@ class TarifResourceIT {
 
     @Test
     @Transactional
+    void getAllTarifsByNumberOfDeviceIsEqualToSomething() throws Exception {
+        // Initialize the database
+        tarifRepository.saveAndFlush(tarif);
+
+        // Get all the tarifList where numberOfDevice equals to DEFAULT_NUMBER_OF_DEVICE
+        defaultTarifShouldBeFound("numberOfDevice.equals=" + DEFAULT_NUMBER_OF_DEVICE);
+
+        // Get all the tarifList where numberOfDevice equals to UPDATED_NUMBER_OF_DEVICE
+        defaultTarifShouldNotBeFound("numberOfDevice.equals=" + UPDATED_NUMBER_OF_DEVICE);
+    }
+
+    @Test
+    @Transactional
+    void getAllTarifsByNumberOfDeviceIsInShouldWork() throws Exception {
+        // Initialize the database
+        tarifRepository.saveAndFlush(tarif);
+
+        // Get all the tarifList where numberOfDevice in DEFAULT_NUMBER_OF_DEVICE or UPDATED_NUMBER_OF_DEVICE
+        defaultTarifShouldBeFound("numberOfDevice.in=" + DEFAULT_NUMBER_OF_DEVICE + "," + UPDATED_NUMBER_OF_DEVICE);
+
+        // Get all the tarifList where numberOfDevice equals to UPDATED_NUMBER_OF_DEVICE
+        defaultTarifShouldNotBeFound("numberOfDevice.in=" + UPDATED_NUMBER_OF_DEVICE);
+    }
+
+    @Test
+    @Transactional
+    void getAllTarifsByNumberOfDeviceIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        tarifRepository.saveAndFlush(tarif);
+
+        // Get all the tarifList where numberOfDevice is not null
+        defaultTarifShouldBeFound("numberOfDevice.specified=true");
+
+        // Get all the tarifList where numberOfDevice is null
+        defaultTarifShouldNotBeFound("numberOfDevice.specified=false");
+    }
+
+    @Test
+    @Transactional
+    void getAllTarifsByNumberOfDeviceIsGreaterThanOrEqualToSomething() throws Exception {
+        // Initialize the database
+        tarifRepository.saveAndFlush(tarif);
+
+        // Get all the tarifList where numberOfDevice is greater than or equal to DEFAULT_NUMBER_OF_DEVICE
+        defaultTarifShouldBeFound("numberOfDevice.greaterThanOrEqual=" + DEFAULT_NUMBER_OF_DEVICE);
+
+        // Get all the tarifList where numberOfDevice is greater than or equal to UPDATED_NUMBER_OF_DEVICE
+        defaultTarifShouldNotBeFound("numberOfDevice.greaterThanOrEqual=" + UPDATED_NUMBER_OF_DEVICE);
+    }
+
+    @Test
+    @Transactional
+    void getAllTarifsByNumberOfDeviceIsLessThanOrEqualToSomething() throws Exception {
+        // Initialize the database
+        tarifRepository.saveAndFlush(tarif);
+
+        // Get all the tarifList where numberOfDevice is less than or equal to DEFAULT_NUMBER_OF_DEVICE
+        defaultTarifShouldBeFound("numberOfDevice.lessThanOrEqual=" + DEFAULT_NUMBER_OF_DEVICE);
+
+        // Get all the tarifList where numberOfDevice is less than or equal to SMALLER_NUMBER_OF_DEVICE
+        defaultTarifShouldNotBeFound("numberOfDevice.lessThanOrEqual=" + SMALLER_NUMBER_OF_DEVICE);
+    }
+
+    @Test
+    @Transactional
+    void getAllTarifsByNumberOfDeviceIsLessThanSomething() throws Exception {
+        // Initialize the database
+        tarifRepository.saveAndFlush(tarif);
+
+        // Get all the tarifList where numberOfDevice is less than DEFAULT_NUMBER_OF_DEVICE
+        defaultTarifShouldNotBeFound("numberOfDevice.lessThan=" + DEFAULT_NUMBER_OF_DEVICE);
+
+        // Get all the tarifList where numberOfDevice is less than UPDATED_NUMBER_OF_DEVICE
+        defaultTarifShouldBeFound("numberOfDevice.lessThan=" + UPDATED_NUMBER_OF_DEVICE);
+    }
+
+    @Test
+    @Transactional
+    void getAllTarifsByNumberOfDeviceIsGreaterThanSomething() throws Exception {
+        // Initialize the database
+        tarifRepository.saveAndFlush(tarif);
+
+        // Get all the tarifList where numberOfDevice is greater than DEFAULT_NUMBER_OF_DEVICE
+        defaultTarifShouldNotBeFound("numberOfDevice.greaterThan=" + DEFAULT_NUMBER_OF_DEVICE);
+
+        // Get all the tarifList where numberOfDevice is greater than SMALLER_NUMBER_OF_DEVICE
+        defaultTarifShouldBeFound("numberOfDevice.greaterThan=" + SMALLER_NUMBER_OF_DEVICE);
+    }
+
+    @Test
+    @Transactional
     void getAllTarifsByDeviceIsEqualToSomething() throws Exception {
         Device device;
         if (TestUtil.findAll(em, Device.class).isEmpty()) {
@@ -409,7 +515,7 @@ class TarifResourceIT {
         }
         em.persist(device);
         em.flush();
-        tarif.setDevice(device);
+        tarif.addDevice(device);
         tarifRepository.saveAndFlush(tarif);
         Long deviceId = device.getId();
 
@@ -431,7 +537,8 @@ class TarifResourceIT {
             .andExpect(jsonPath("$.[*].id").value(hasItem(tarif.getId().intValue())))
             .andExpect(jsonPath("$.[*].amount").value(hasItem(DEFAULT_AMOUNT.intValue())))
             .andExpect(jsonPath("$.[*].paidDate").value(hasItem(DEFAULT_PAID_DATE.toString())))
-            .andExpect(jsonPath("$.[*].paid").value(hasItem(DEFAULT_PAID.booleanValue())));
+            .andExpect(jsonPath("$.[*].paid").value(hasItem(DEFAULT_PAID.booleanValue())))
+            .andExpect(jsonPath("$.[*].numberOfDevice").value(hasItem(DEFAULT_NUMBER_OF_DEVICE.intValue())));
 
         // Check, that the count call also returns 1
         restTarifMockMvc
@@ -479,7 +586,7 @@ class TarifResourceIT {
         Tarif updatedTarif = tarifRepository.findById(tarif.getId()).get();
         // Disconnect from session so that the updates on updatedTarif are not directly saved in db
         em.detach(updatedTarif);
-        updatedTarif.amount(UPDATED_AMOUNT).paidDate(UPDATED_PAID_DATE).paid(UPDATED_PAID);
+        updatedTarif.amount(UPDATED_AMOUNT).paidDate(UPDATED_PAID_DATE).paid(UPDATED_PAID).numberOfDevice(UPDATED_NUMBER_OF_DEVICE);
 
         restTarifMockMvc
             .perform(
@@ -496,6 +603,7 @@ class TarifResourceIT {
         assertThat(testTarif.getAmount()).isEqualTo(UPDATED_AMOUNT);
         assertThat(testTarif.getPaidDate()).isEqualTo(UPDATED_PAID_DATE);
         assertThat(testTarif.getPaid()).isEqualTo(UPDATED_PAID);
+        assertThat(testTarif.getNumberOfDevice()).isEqualTo(UPDATED_NUMBER_OF_DEVICE);
     }
 
     @Test
@@ -583,6 +691,7 @@ class TarifResourceIT {
         assertThat(testTarif.getAmount()).isEqualTo(UPDATED_AMOUNT);
         assertThat(testTarif.getPaidDate()).isEqualTo(UPDATED_PAID_DATE);
         assertThat(testTarif.getPaid()).isEqualTo(UPDATED_PAID);
+        assertThat(testTarif.getNumberOfDevice()).isEqualTo(DEFAULT_NUMBER_OF_DEVICE);
     }
 
     @Test
@@ -597,7 +706,7 @@ class TarifResourceIT {
         Tarif partialUpdatedTarif = new Tarif();
         partialUpdatedTarif.setId(tarif.getId());
 
-        partialUpdatedTarif.amount(UPDATED_AMOUNT).paidDate(UPDATED_PAID_DATE).paid(UPDATED_PAID);
+        partialUpdatedTarif.amount(UPDATED_AMOUNT).paidDate(UPDATED_PAID_DATE).paid(UPDATED_PAID).numberOfDevice(UPDATED_NUMBER_OF_DEVICE);
 
         restTarifMockMvc
             .perform(
@@ -614,6 +723,7 @@ class TarifResourceIT {
         assertThat(testTarif.getAmount()).isEqualTo(UPDATED_AMOUNT);
         assertThat(testTarif.getPaidDate()).isEqualTo(UPDATED_PAID_DATE);
         assertThat(testTarif.getPaid()).isEqualTo(UPDATED_PAID);
+        assertThat(testTarif.getNumberOfDevice()).isEqualTo(UPDATED_NUMBER_OF_DEVICE);
     }
 
     @Test

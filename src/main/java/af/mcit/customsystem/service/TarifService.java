@@ -68,6 +68,9 @@ public class TarifService {
                 if (tarif.getPaid() != null) {
                     existingTarif.setPaid(tarif.getPaid());
                 }
+                if (tarif.getNumberOfDevice() != null) {
+                    existingTarif.setNumberOfDevice(tarif.getNumberOfDevice());
+                }
 
                 return existingTarif;
             })

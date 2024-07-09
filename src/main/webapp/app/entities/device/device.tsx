@@ -112,6 +112,9 @@ export const Device = () => {
                 <th>
                   Trader <FontAwesomeIcon icon="sort" />
                 </th>
+                <th>
+                  Tarif <FontAwesomeIcon icon="sort" />
+                </th>
                 <th />
               </tr>
             </thead>
@@ -126,6 +129,7 @@ export const Device = () => {
                   <td>{device.serialNumber}</td>
                   <td>{device.modelNumber}</td>
                   <td>{device.trader ? <Link to={`/trader/${device.trader.id}`}>{device.trader.id}</Link> : ''}</td>
+                  <td>{device.tarif ? <Link to={`/tarif/${device.tarif.id}`}>{device.tarif.id}</Link> : ''}</td>
                   <td className="text-end">
                     <div className="btn-group flex-btn-group-container">
                       <Button tag={Link} to={`/device/${device.id}`} color="info" size="sm" data-cy="entityDetailsButton">

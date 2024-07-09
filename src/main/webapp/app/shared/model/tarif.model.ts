@@ -6,7 +6,8 @@ export interface ITarif {
   amount?: number | null;
   paidDate?: string | null;
   paid?: boolean | null;
-  device?: IDevice | null;
+  numberOfDevice?: number | null;
+  devices?: IDevice[] | null;
 }
 
 export const defaultValue: Readonly<ITarif> = {

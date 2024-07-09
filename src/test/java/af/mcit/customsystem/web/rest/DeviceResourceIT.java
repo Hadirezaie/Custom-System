@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import af.mcit.customsystem.IntegrationTest;
 import af.mcit.customsystem.domain.Device;
+import af.mcit.customsystem.domain.Tarif;
 import af.mcit.customsystem.domain.Trader;
 import af.mcit.customsystem.repository.DeviceRepository;
 import af.mcit.customsystem.service.criteria.DeviceCriteria;
@@ -351,6 +352,29 @@ class DeviceResourceIT {
 
         // Get all the deviceList where trader equals to (traderId + 1)
         defaultDeviceShouldNotBeFound("traderId.equals=" + (traderId + 1));
+    }
+
+    @Test
+    @Transactional
+    void getAllDevicesByTarifIsEqualToSomething() throws Exception {
+        Tarif tarif;
+        if (TestUtil.findAll(em, Tarif.class).isEmpty()) {
+            deviceRepository.saveAndFlush(device);
+            tarif = TarifResourceIT.createEntity(em);
+        } else {
+            tarif = TestUtil.findAll(em, Tarif.class).get(0);
+        }
+        em.persist(tarif);
+        em.flush();
+        device.setTarif(tarif);
+        deviceRepository.saveAndFlush(device);
+        Long tarifId = tarif.getId();
+
+        // Get all the deviceList where tarif equals to tarifId
+        defaultDeviceShouldBeFound("tarifId.equals=" + tarifId);
+
+        // Get all the deviceList where tarif equals to (tarifId + 1)
+        defaultDeviceShouldNotBeFound("tarifId.equals=" + (tarifId + 1));
     }
 
     /**

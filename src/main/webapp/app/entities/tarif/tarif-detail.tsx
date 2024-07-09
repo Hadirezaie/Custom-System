@@ -40,8 +40,10 @@ export const TarifDetail = () => {
             <span id="paid">Paid</span>
           </dt>
           <dd>{tarifEntity.paid ? 'true' : 'false'}</dd>
-          <dt>Device</dt>
-          <dd>{tarifEntity.device ? tarifEntity.device.id : ''}</dd>
+          <dt>
+            <span id="numberOfDevice">Number Of Device</span>
+          </dt>
+          <dd>{tarifEntity.numberOfDevice}</dd>
         </dl>
         <Button tag={Link} to="/tarif" replace color="info" data-cy="entityDetailsBackButton">
           <FontAwesomeIcon icon="arrow-left" /> <span className="d-none d-md-inline">Back</span>

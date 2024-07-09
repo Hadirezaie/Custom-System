@@ -112,8 +112,8 @@ export const Tarif = () => {
                 <th className="hand" onClick={sort('paid')}>
                   Paid <FontAwesomeIcon icon="sort" />
                 </th>
-                <th>
-                  Device <FontAwesomeIcon icon="sort" />
+                <th className="hand" onClick={sort('numberOfDevice')}>
+                  Number Of Device <FontAwesomeIcon icon="sort" />
                 </th>
                 <th />
               </tr>
@@ -129,7 +129,7 @@ export const Tarif = () => {
                   <td>{tarif.amount}</td>
                   <td>{tarif.paidDate ? <TextFormat type="date" value={tarif.paidDate} format={APP_LOCAL_DATE_FORMAT} /> : null}</td>
                   <td>{tarif.paid ? 'true' : 'false'}</td>
-                  <td>{tarif.device ? <Link to={`/device/${tarif.device.id}`}>{tarif.device.id}</Link> : ''}</td>
+                  <td>{tarif.numberOfDevice}</td>
                   <td className="text-end">
                     <div className="btn-group flex-btn-group-container">
                       <Button tag={Link} to={`/tarif/${tarif.id}`} color="info" size="sm" data-cy="entityDetailsButton">

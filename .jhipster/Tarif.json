@@ -16,6 +16,10 @@
     {
       "fieldName": "paid",
       "fieldType": "Boolean"
+    },
+    {
+      "fieldName": "numberOfDevice",
+      "fieldType": "Long"
     }
   ],
   "fluentMethods": true,
@@ -26,9 +30,9 @@
   "relationships": [
     {
       "otherEntityName": "device",
-      "ownerSide": true,
+      "otherEntityRelationshipName": "tarif",
       "relationshipName": "device",
-      "relationshipType": "one-to-one"
+      "relationshipType": "one-to-many"
     }
   ],
   "service": "serviceClass"

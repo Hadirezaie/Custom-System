@@ -94,10 +94,13 @@ public class TarifQueryService extends QueryService<Tarif> {
             if (criteria.getPaid() != null) {
                 specification = specification.and(buildSpecification(criteria.getPaid(), Tarif_.paid));
             }
+            if (criteria.getNumberOfDevice() != null) {
+                specification = specification.and(buildRangeSpecification(criteria.getNumberOfDevice(), Tarif_.numberOfDevice));
+            }
             if (criteria.getDeviceId() != null) {
                 specification =
                     specification.and(
-                        buildSpecification(criteria.getDeviceId(), root -> root.join(Tarif_.device, JoinType.LEFT).get(Device_.id))
+                        buildSpecification(criteria.getDeviceId(), root -> root.join(Tarif_.devices, JoinType.LEFT).get(Device_.id))
                     );
             }
         }

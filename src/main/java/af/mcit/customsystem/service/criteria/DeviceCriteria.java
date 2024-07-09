@@ -29,6 +29,8 @@ public class DeviceCriteria implements Serializable, Criteria {
 
     private LongFilter traderId;
 
+    private LongFilter tarifId;
+
     private Boolean distinct;
 
     public DeviceCriteria() {}
@@ -38,6 +40,7 @@ public class DeviceCriteria implements Serializable, Criteria {
         this.serialNumber = other.serialNumber == null ? null : other.serialNumber.copy();
         this.modelNumber = other.modelNumber == null ? null : other.modelNumber.copy();
         this.traderId = other.traderId == null ? null : other.traderId.copy();
+        this.tarifId = other.tarifId == null ? null : other.tarifId.copy();
         this.distinct = other.distinct;
     }
 
@@ -106,6 +109,21 @@ public class DeviceCriteria implements Serializable, Criteria {
         this.traderId = traderId;
     }
 
+    public LongFilter getTarifId() {
+        return tarifId;
+    }
+
+    public LongFilter tarifId() {
+        if (tarifId == null) {
+            tarifId = new LongFilter();
+        }
+        return tarifId;
+    }
+
+    public void setTarifId(LongFilter tarifId) {
+        this.tarifId = tarifId;
+    }
+
     public Boolean getDistinct() {
         return distinct;
     }
@@ -128,13 +146,14 @@ public class DeviceCriteria implements Serializable, Criteria {
             Objects.equals(serialNumber, that.serialNumber) &&
             Objects.equals(modelNumber, that.modelNumber) &&
             Objects.equals(traderId, that.traderId) &&
+            Objects.equals(tarifId, that.tarifId) &&
             Objects.equals(distinct, that.distinct)
         );
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, serialNumber, modelNumber, traderId, distinct);
+        return Objects.hash(id, serialNumber, modelNumber, traderId, tarifId, distinct);
     }
 
     // prettier-ignore
@@ -145,6 +164,7 @@ public class DeviceCriteria implements Serializable, Criteria {
             (serialNumber != null ? "serialNumber=" + serialNumber + ", " : "") +
             (modelNumber != null ? "modelNumber=" + modelNumber + ", " : "") +
             (traderId != null ? "traderId=" + traderId + ", " : "") +
+            (tarifId != null ? "tarifId=" + tarifId + ", " : "") +
             (distinct != null ? "distinct=" + distinct + ", " : "") +
             "}";
     }

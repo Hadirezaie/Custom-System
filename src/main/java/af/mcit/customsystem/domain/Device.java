@@ -1,5 +1,6 @@
 package af.mcit.customsystem.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
 import javax.persistence.*;
 import javax.validation.constraints.*;
@@ -30,6 +31,10 @@ public class Device implements Serializable {
 
     @ManyToOne
     private Trader trader;
+
+    @ManyToOne
+    @JsonIgnoreProperties(value = { "devices" }, allowSetters = true)
+    private Tarif tarif;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
@@ -82,6 +87,19 @@ public class Device implements Serializable {
 
     public Device trader(Trader trader) {
         this.setTrader(trader);
+        return this;
+    }
+
+    public Tarif getTarif() {
+        return this.tarif;
+    }
+
+    public void setTarif(Tarif tarif) {
+        this.tarif = tarif;
+    }
+
+    public Device tarif(Tarif tarif) {
+        this.setTarif(tarif);
         return this;
     }
 

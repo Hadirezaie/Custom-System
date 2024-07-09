@@ -10,6 +10,8 @@ import { useAppDispatch, useAppSelector } from 'app/config/store';
 
 import { ITrader } from 'app/shared/model/trader.model';
 import { getEntities as getTraders } from 'app/entities/trader/trader.reducer';
+import { ITarif } from 'app/shared/model/tarif.model';
+import { getEntities as getTarifs } from 'app/entities/tarif/tarif.reducer';
 import { IDevice } from 'app/shared/model/device.model';
 import { getEntity, updateEntity, createEntity, reset } from './device.reducer';
 
@@ -22,6 +24,7 @@ export const DeviceUpdate = () => {
   const isNew = id === undefined;
 
   const traders = useAppSelector(state => state.trader.entities);
+  const tarifs = useAppSelector(state => state.tarif.entities);
   const deviceEntity = useAppSelector(state => state.device.entity);
   const loading = useAppSelector(state => state.device.loading);
   const updating = useAppSelector(state => state.device.updating);
@@ -39,6 +42,7 @@ export const DeviceUpdate = () => {
     }
 
     dispatch(getTraders({}));
+    dispatch(getTarifs({}));
   }, []);
 
   useEffect(() => {
@@ -52,6 +56,7 @@ export const DeviceUpdate = () => {
       ...deviceEntity,
       ...values,
       trader: traders.find(it => it.id.toString() === values.trader.toString()),
+      tarif: tarifs.find(it => it.id.toString() === values.tarif.toString()),
     };
 
     if (isNew) {
@@ -67,6 +72,7 @@ export const DeviceUpdate = () => {
       : {
           ...deviceEntity,
           trader: deviceEntity?.trader?.id,
+          tarif: deviceEntity?.tarif?.id,
         };
 
   return (
@@ -109,6 +115,16 @@ export const DeviceUpdate = () => {
                 <option value="" key="0" />
                 {traders
                   ? traders.map(otherEntity => (
+                      <option value={otherEntity.id} key={otherEntity.id}>
+                        {otherEntity.id}
+                      </option>
+                    ))
+                  : null}
+              </ValidatedField>
+              <ValidatedField id="device-tarif" name="tarif" data-cy="tarif" label="Tarif" type="select">
+                <option value="" key="0" />
+                {tarifs
+                  ? tarifs.map(otherEntity => (
                       <option value={otherEntity.id} key={otherEntity.id}>
                         {otherEntity.id}
                       </option>

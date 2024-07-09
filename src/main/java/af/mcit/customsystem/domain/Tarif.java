@@ -3,6 +3,8 @@ package af.mcit.customsystem.domain;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 import javax.persistence.*;
 
 /**
@@ -30,10 +32,12 @@ public class Tarif implements Serializable {
     @Column(name = "paid")
     private Boolean paid;
 
-    @JsonIgnoreProperties(value = { "trader" }, allowSetters = true)
-    @OneToOne
-    @JoinColumn(unique = true)
-    private Device device;
+    @Column(name = "number_of_device")
+    private Long numberOfDevice;
+
+    @OneToMany(mappedBy = "tarif")
+    @JsonIgnoreProperties(value = { "trader", "tarif" }, allowSetters = true)
+    private Set<Device> devices = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
@@ -89,16 +93,47 @@ public class Tarif implements Serializable {
         this.paid = paid;
     }
 
-    public Device getDevice() {
-        return this.device;
+    public Long getNumberOfDevice() {
+        return this.numberOfDevice;
     }
 
-    public void setDevice(Device device) {
-        this.device = device;
+    public Tarif numberOfDevice(Long numberOfDevice) {
+        this.setNumberOfDevice(numberOfDevice);
+        return this;
     }
 
-    public Tarif device(Device device) {
-        this.setDevice(device);
+    public void setNumberOfDevice(Long numberOfDevice) {
+        this.numberOfDevice = numberOfDevice;
+    }
+
+    public Set<Device> getDevices() {
+        return this.devices;
+    }
+
+    public void setDevices(Set<Device> devices) {
+        if (this.devices != null) {
+            this.devices.forEach(i -> i.setTarif(null));
+        }
+        if (devices != null) {
+            devices.forEach(i -> i.setTarif(this));
+        }
+        this.devices = devices;
+    }
+
+    public Tarif devices(Set<Device> devices) {
+        this.setDevices(devices);
+        return this;
+    }
+
+    public Tarif addDevice(Device device) {
+        this.devices.add(device);
+        device.setTarif(this);
+        return this;
+    }
+
+    public Tarif removeDevice(Device device) {
+        this.devices.remove(device);
+        device.setTarif(null);
         return this;
     }
 
@@ -129,6 +164,7 @@ public class Tarif implements Serializable {
             ", amount=" + getAmount() +
             ", paidDate='" + getPaidDate() + "'" +
             ", paid='" + getPaid() + "'" +
+            ", numberOfDevice=" + getNumberOfDevice() +
             "}";
     }
 }

@@ -29,6 +29,8 @@ public class TarifCriteria implements Serializable, Criteria {
 
     private BooleanFilter paid;
 
+    private LongFilter numberOfDevice;
+
     private LongFilter deviceId;
 
     private Boolean distinct;
@@ -40,6 +42,7 @@ public class TarifCriteria implements Serializable, Criteria {
         this.amount = other.amount == null ? null : other.amount.copy();
         this.paidDate = other.paidDate == null ? null : other.paidDate.copy();
         this.paid = other.paid == null ? null : other.paid.copy();
+        this.numberOfDevice = other.numberOfDevice == null ? null : other.numberOfDevice.copy();
         this.deviceId = other.deviceId == null ? null : other.deviceId.copy();
         this.distinct = other.distinct;
     }
@@ -109,6 +112,21 @@ public class TarifCriteria implements Serializable, Criteria {
         this.paid = paid;
     }
 
+    public LongFilter getNumberOfDevice() {
+        return numberOfDevice;
+    }
+
+    public LongFilter numberOfDevice() {
+        if (numberOfDevice == null) {
+            numberOfDevice = new LongFilter();
+        }
+        return numberOfDevice;
+    }
+
+    public void setNumberOfDevice(LongFilter numberOfDevice) {
+        this.numberOfDevice = numberOfDevice;
+    }
+
     public LongFilter getDeviceId() {
         return deviceId;
     }
@@ -146,6 +164,7 @@ public class TarifCriteria implements Serializable, Criteria {
             Objects.equals(amount, that.amount) &&
             Objects.equals(paidDate, that.paidDate) &&
             Objects.equals(paid, that.paid) &&
+            Objects.equals(numberOfDevice, that.numberOfDevice) &&
             Objects.equals(deviceId, that.deviceId) &&
             Objects.equals(distinct, that.distinct)
         );
@@ -153,7 +172,7 @@ public class TarifCriteria implements Serializable, Criteria {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, amount, paidDate, paid, deviceId, distinct);
+        return Objects.hash(id, amount, paidDate, paid, numberOfDevice, deviceId, distinct);
     }
 
     // prettier-ignore
@@ -164,6 +183,7 @@ public class TarifCriteria implements Serializable, Criteria {
             (amount != null ? "amount=" + amount + ", " : "") +
             (paidDate != null ? "paidDate=" + paidDate + ", " : "") +
             (paid != null ? "paid=" + paid + ", " : "") +
+            (numberOfDevice != null ? "numberOfDevice=" + numberOfDevice + ", " : "") +
             (deviceId != null ? "deviceId=" + deviceId + ", " : "") +
             (distinct != null ? "distinct=" + distinct + ", " : "") +
             "}";

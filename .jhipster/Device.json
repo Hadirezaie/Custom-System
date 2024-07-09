@@ -26,6 +26,12 @@
       "otherEntityName": "trader",
       "relationshipName": "trader",
       "relationshipType": "many-to-one"
+    },
+    {
+      "otherEntityName": "tarif",
+      "otherEntityRelationshipName": "device",
+      "relationshipName": "tarif",
+      "relationshipType": "many-to-one"
     }
   ],
   "service": "serviceClass"

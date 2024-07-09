@@ -97,6 +97,12 @@ public class DeviceQueryService extends QueryService<Device> {
                         buildSpecification(criteria.getTraderId(), root -> root.join(Device_.trader, JoinType.LEFT).get(Trader_.id))
                     );
             }
+            if (criteria.getTarifId() != null) {
+                specification =
+                    specification.and(
+                        buildSpecification(criteria.getTarifId(), root -> root.join(Device_.tarif, JoinType.LEFT).get(Tarif_.id))
+                    );
+            }
         }
         return specification;
     }

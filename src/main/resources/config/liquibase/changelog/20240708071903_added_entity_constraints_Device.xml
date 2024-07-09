@@ -13,5 +13,11 @@
                                  constraintName="fk_device__trader_id"
                                  referencedColumnNames="id"
                                  referencedTableName="trader"/>
+
+        <addForeignKeyConstraint baseColumnNames="tarif_id"
+                                 baseTableName="device"
+                                 constraintName="fk_device__tarif_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="tarif"/>
     </changeSet>
 </databaseChangeLog>

@@ -38,6 +38,8 @@ export const DeviceDetail = () => {
           <dd>{deviceEntity.modelNumber}</dd>
           <dt>Trader</dt>
           <dd>{deviceEntity.trader ? deviceEntity.trader.id : ''}</dd>
+          <dt>Tarif</dt>
+          <dd>{deviceEntity.tarif ? deviceEntity.tarif.id : ''}</dd>
         </dl>
         <Button tag={Link} to="/device" replace color="info" data-cy="entityDetailsBackButton">
           <FontAwesomeIcon icon="arrow-left" /> <span className="d-none d-md-inline">Back</span>

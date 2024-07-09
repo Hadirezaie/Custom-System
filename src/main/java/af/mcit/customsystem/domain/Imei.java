@@ -24,7 +24,7 @@ public class Imei implements Serializable {
     private Long imeiNumber;
 
     @ManyToOne
-    @JsonIgnoreProperties(value = { "trader" }, allowSetters = true)
+    @JsonIgnoreProperties(value = { "trader", "tarif" }, allowSetters = true)
     private Device device;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
