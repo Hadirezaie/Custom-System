@@ -10,12 +10,14 @@ import af.mcit.customsystem.repository.ImeiRepository;
 import af.mcit.customsystem.repository.TarifRepository;
 import af.mcit.customsystem.repository.TraderRepository;
 import af.mcit.customsystem.service.criteria.CustomChargesCriteria;
+import af.mcit.customsystem.service.criteria.DeviceCriteria;
 import af.mcit.customsystem.service.criteria.ImeiCriteria;
 import af.mcit.customsystem.service.criteria.TraderCriteria;
 import af.mcit.customsystem.service.dto.ImeiCheckDTO;
 import af.mcit.customsystem.service.dto.ImeiCheckResultDTO;
 import af.mcit.customsystem.service.dto.ImeiRegisterDTO;
 import af.mcit.customsystem.service.dto.ImeiRegisterResultDTO;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -149,34 +151,36 @@ public class ImeiService {
 
     public ImeiCheckResultDTO checkImei(ImeiCheckDTO imeiCheckDTO) {
         log.debug("Request to check Imei : {}", imeiCheckDTO);
+
         // Initialize resultDTO
         ImeiCheckResultDTO resultDTO = new ImeiCheckResultDTO();
-        resultDTO.setImei(imeiCheckDTO.getImei());
+
+        // Query for Device
+        Optional<Device> optionalDevice = findDeviceBySerialAndModel(imeiCheckDTO.getDeviceSerialNumber(), imeiCheckDTO.getDeviceModel());
+
+        if (optionalDevice.isEmpty()) {
+            resultDTO.setDescription("Device not found!");
+            return resultDTO;
+        }
+        Device device = optionalDevice.get();
 
         // Query for IMEI
+        List<Long> imeiNumbers = convertToLongList(imeiCheckDTO.getImeis());
         ImeiCriteria imeiCriteria = new ImeiCriteria();
-        imeiCriteria.setImeiNumber((LongFilter) new LongFilter().setEquals(imeiCheckDTO.getImei()));
+        imeiCriteria.setImeiNumber((LongFilter) new LongFilter().setIn(imeiNumbers));
+        imeiCriteria.setDeviceId((LongFilter) new LongFilter().setEquals(device.getId()));
         List<Imei> imeis = imeiQueryService.findByCriteria(imeiCriteria);
 
-        // Check if IMEI is not found
         if (imeis.isEmpty()) {
             resultDTO.setDescription("IMEI not found!");
             return resultDTO;
         }
-
-        // Get the first IMEI (assuming IMEI is unique or order doesn't matter)
         Imei imei = imeis.get(0);
 
-        // Check if Device is not found
-        if (imei.getDevice() == null) {
-            resultDTO.setDescription("Device not found!");
-            return resultDTO;
-        }
-
         // Set Device Model
-        resultDTO.setDeviceModel(imei.getDevice().getModelNumber());
+        resultDTO.setDeviceModel(device.getModelNumber());
 
-        // Check if Tarif is unpaid
+        // Check Tarif Payment Status
         if (!imei.getDevice().getTarif().getPaid()) {
             resultDTO.setDescription("Unpaid!");
         } else {
@@ -186,6 +190,28 @@ public class ImeiService {
         }
 
         return resultDTO;
+    }
+
+    private Optional<Device> findDeviceBySerialAndModel(String serialNumber, String modelNumber) {
+        DeviceCriteria deviceCriteria = new DeviceCriteria();
+        deviceCriteria.setSerialNumber((StringFilter) new StringFilter().setEquals(serialNumber));
+        deviceCriteria.setModelNumber((StringFilter) new StringFilter().setEquals(modelNumber));
+
+        List<Device> devices = deviceQueryService.findByCriteria(deviceCriteria);
+        return devices.isEmpty() ? Optional.empty() : Optional.of(devices.get(0));
+    }
+
+    private List<Long> convertToLongList(Set<String> imeiStrings) {
+        List<Long> imeiNumbers = new ArrayList<>();
+        for (String imeiString : imeiStrings) {
+            try {
+                Long imeiNumber = Long.parseLong(imeiString);
+                imeiNumbers.add(imeiNumber);
+            } catch (NumberFormatException e) {
+                log.error("Invalid IMEI number format: {}", imeiString);
+            }
+        }
+        return imeiNumbers;
     }
 
     // register
