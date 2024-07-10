@@ -7,6 +7,8 @@ import af.mcit.customsystem.service.ImeiService;
 import af.mcit.customsystem.service.criteria.ImeiCriteria;
 import af.mcit.customsystem.service.dto.ImeiCheckDTO;
 import af.mcit.customsystem.service.dto.ImeiCheckResultDTO;
+import af.mcit.customsystem.service.dto.ImeiRegisterDTO;
+import af.mcit.customsystem.service.dto.ImeiRegisterResultDTO;
 import af.mcit.customsystem.web.rest.errors.BadRequestAlertException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -208,5 +210,11 @@ public class ImeiResource {
     public ImeiCheckResultDTO checkImei(@RequestBody ImeiCheckDTO imeiCheckDTO) {
         log.debug("Chceck Imei if paid the customs fee: {}", imeiCheckDTO);
         return imeiService.checkImei(imeiCheckDTO);
+    }
+
+    @PostMapping("imeis/imei-register")
+    public ImeiRegisterResultDTO registerImei(@RequestBody ImeiRegisterDTO imeiRegisterDTO) {
+        log.debug("Save Device and Trader with imeis: {}", imeiRegisterDTO);
+        return imeiService.registerImei(imeiRegisterDTO);
     }
 }
