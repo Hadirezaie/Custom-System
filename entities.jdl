@@ -31,7 +31,7 @@ relationship ManyToOne {
      Device {trader} to Trader
 }
 relationship OneToMany {
-    Tarif {device} to Device   
+    Tarif {device} to Device 
 }
 
 filter *

@@ -5,6 +5,8 @@ import af.mcit.customsystem.repository.ImeiRepository;
 import af.mcit.customsystem.service.ImeiQueryService;
 import af.mcit.customsystem.service.ImeiService;
 import af.mcit.customsystem.service.criteria.ImeiCriteria;
+import af.mcit.customsystem.service.dto.ImeiCheckDTO;
+import af.mcit.customsystem.service.dto.ImeiCheckResultDTO;
 import af.mcit.customsystem.web.rest.errors.BadRequestAlertException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -54,7 +56,9 @@ public class ImeiResource {
      * {@code POST  /imeis} : Create a new imei.
      *
      * @param imei the imei to create.
-     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new imei, or with status {@code 400 (Bad Request)} if the imei has already an ID.
+     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with
+     *         body the new imei, or with status {@code 400 (Bad Request)} if the
+     *         imei has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("/imeis")
@@ -73,11 +77,13 @@ public class ImeiResource {
     /**
      * {@code PUT  /imeis/:id} : Updates an existing imei.
      *
-     * @param id the id of the imei to save.
+     * @param id   the id of the imei to save.
      * @param imei the imei to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated imei,
-     * or with status {@code 400 (Bad Request)} if the imei is not valid,
-     * or with status {@code 500 (Internal Server Error)} if the imei couldn't be updated.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body
+     *         the updated imei,
+     *         or with status {@code 400 (Bad Request)} if the imei is not valid,
+     *         or with status {@code 500 (Internal Server Error)} if the imei
+     *         couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/imeis/{id}")
@@ -103,14 +109,17 @@ public class ImeiResource {
     }
 
     /**
-     * {@code PATCH  /imeis/:id} : Partial updates given fields of an existing imei, field will ignore if it is null
+     * {@code PATCH  /imeis/:id} : Partial updates given fields of an existing imei,
+     * field will ignore if it is null
      *
-     * @param id the id of the imei to save.
+     * @param id   the id of the imei to save.
      * @param imei the imei to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated imei,
-     * or with status {@code 400 (Bad Request)} if the imei is not valid,
-     * or with status {@code 404 (Not Found)} if the imei is not found,
-     * or with status {@code 500 (Internal Server Error)} if the imei couldn't be updated.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body
+     *         the updated imei,
+     *         or with status {@code 400 (Bad Request)} if the imei is not valid,
+     *         or with status {@code 404 (Not Found)} if the imei is not found,
+     *         or with status {@code 500 (Internal Server Error)} if the imei
+     *         couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PatchMapping(value = "/imeis/{id}", consumes = { "application/json", "application/merge-patch+json" })
@@ -141,7 +150,8 @@ public class ImeiResource {
      *
      * @param pageable the pagination information.
      * @param criteria the criteria which the requested entities should match.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of imeis in body.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list
+     *         of imeis in body.
      */
     @GetMapping("/imeis")
     public ResponseEntity<List<Imei>> getAllImeis(ImeiCriteria criteria, @org.springdoc.api.annotations.ParameterObject Pageable pageable) {
@@ -155,7 +165,8 @@ public class ImeiResource {
      * {@code GET  /imeis/count} : count all the imeis.
      *
      * @param criteria the criteria which the requested entities should match.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the count in body.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the count
+     *         in body.
      */
     @GetMapping("/imeis/count")
     public ResponseEntity<Long> countImeis(ImeiCriteria criteria) {
@@ -167,7 +178,8 @@ public class ImeiResource {
      * {@code GET  /imeis/:id} : get the "id" imei.
      *
      * @param id the id of the imei to retrieve.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the imei, or with status {@code 404 (Not Found)}.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body
+     *         the imei, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/imeis/{id}")
     public ResponseEntity<Imei> getImei(@PathVariable Long id) {
@@ -190,5 +202,11 @@ public class ImeiResource {
             .noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, false, ENTITY_NAME, id.toString()))
             .build();
+    }
+
+    @PostMapping("imeis/imei-check")
+    public ImeiCheckResultDTO checkImei(@RequestBody ImeiCheckDTO imeiCheckDTO) {
+        log.debug("Chceck Imei if paid the customs fee: {}", imeiCheckDTO);
+        return imeiService.checkImei(imeiCheckDTO);
     }
 }

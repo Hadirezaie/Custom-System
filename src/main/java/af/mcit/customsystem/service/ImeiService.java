@@ -1,7 +1,13 @@
 package af.mcit.customsystem.service;
 
+import af.mcit.customsystem.domain.Device;
 import af.mcit.customsystem.domain.Imei;
 import af.mcit.customsystem.repository.ImeiRepository;
+import af.mcit.customsystem.service.criteria.DeviceCriteria;
+import af.mcit.customsystem.service.criteria.ImeiCriteria;
+import af.mcit.customsystem.service.dto.ImeiCheckDTO;
+import af.mcit.customsystem.service.dto.ImeiCheckResultDTO;
+import java.util.List;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,6 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tech.jhipster.service.filter.LongFilter;
 
 /**
  * Service Implementation for managing {@link Imei}.
@@ -20,9 +27,13 @@ public class ImeiService {
     private final Logger log = LoggerFactory.getLogger(ImeiService.class);
 
     private final ImeiRepository imeiRepository;
+    private final DeviceQueryService deviceQueryService;
+    private final ImeiQueryService imeiQueryService;
 
-    public ImeiService(ImeiRepository imeiRepository) {
+    public ImeiService(ImeiRepository imeiRepository, DeviceQueryService deviceQueryService, ImeiQueryService imeiQueryService) {
         this.imeiRepository = imeiRepository;
+        this.deviceQueryService = deviceQueryService;
+        this.imeiQueryService = imeiQueryService;
     }
 
     /**
@@ -100,5 +111,35 @@ public class ImeiService {
     public void delete(Long id) {
         log.debug("Request to delete Imei : {}", id);
         imeiRepository.deleteById(id);
+    }
+
+    public ImeiCheckResultDTO checkImei(ImeiCheckDTO imeiCheckDTO) {
+        ImeiCheckResultDTO resultDTO = new ImeiCheckResultDTO();
+        // select imei
+        ImeiCriteria imeiCriteria = new ImeiCriteria();
+        imeiCriteria.setImeiNumber((LongFilter) new LongFilter().setEquals(imeiCheckDTO.getImei()));
+        List<Imei> imeis = imeiQueryService.findByCriteria(imeiCriteria);
+        if (imeis.isEmpty()) {
+            resultDTO.setImei(imeiCheckDTO.getImei());
+            resultDTO.setDescription("IMEI not found!");
+            return resultDTO;
+        }
+        if (imeis.get(0).getDevice() == null) {
+            resultDTO.setImei(imeiCheckDTO.getImei());
+            resultDTO.setDescription("Device not found!");
+            return resultDTO;
+        }
+
+        resultDTO.setDeviceModel(imeis.get(0).getDevice().getModelNumber());
+        resultDTO.setImei(imeiCheckDTO.getImei());
+        if (!imeis.get(0).getDevice().getTarif().getPaid()) {
+            resultDTO.setDescription("UnPaid!");
+        } else {
+            resultDTO.setDescription("Paid!");
+            resultDTO.setTraderName(imeis.get(0).getDevice().getTrader().getName());
+            resultDTO.setTraderNidNumber(imeis.get(0).getDevice().getTrader().getNidNumber());
+        }
+
+        return resultDTO;
     }
 }
