@@ -1,7 +1,12 @@
 package af.mcit.customsystem.service;
 
 import af.mcit.customsystem.domain.Device;
+import af.mcit.customsystem.domain.Imei;
 import af.mcit.customsystem.repository.DeviceRepository;
+import af.mcit.customsystem.service.dto.DeviceRegisterBatchDTO;
+import af.mcit.customsystem.service.dto.DeviceRegisterDTO;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
