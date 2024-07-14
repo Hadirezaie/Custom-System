@@ -26,6 +26,7 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicLong;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import org.slf4j.Logger;
@@ -257,26 +258,31 @@ public class DeviceResource {
     @PostMapping("/devices/batch")
     public ResponseEntity<ImeiRegisterResultDTO> insertBatchDevices(@RequestBody DeviceRegisterBatchDTO batchRegDto) {
         Trader trader = findOrCreateTrader(batchRegDto.getTrader());
-        Long totalCharge = 0L;
 
+        AtomicLong totalCharge = new AtomicLong(0L);
         batchRegDto
             .getDeviceRegisterDTOs()
             .forEach(batchDTO -> {
+                long chargeForIteration = 0L;
                 try {
                     CustomCharges customCharges = findCustomCharges(batchDTO.getDeviceDTO());
                     Tarif savedTarif = saveTarif(customCharges);
-                    // totalCharge=totalCharge+savedTarif.getAmount();
+                    chargeForIteration = savedTarif.getAmount();
 
                     Device savedDevice = saveDevice(batchDTO.getDeviceDTO(), savedTarif, trader);
 
                     saveImeis(batchDTO.getImeis(), savedDevice);
                 } catch (Exception e) {}
+
+                totalCharge.addAndGet(chargeForIteration);
             });
+
+        System.out.println("\n" + totalCharge.get());
 
         ImeiRegisterResultDTO regDto = new ImeiRegisterResultDTO();
         regDto.setMessage("Batch Inserted Successfully");
         regDto.setPaidStatus("UnPaid");
-        regDto.setCustomCharge(totalCharge);
+        regDto.setCustomCharge(totalCharge.get());
         return ResponseEntity.ok(regDto);
     }
 
