@@ -277,8 +277,6 @@ public class DeviceResource {
                 totalCharge.addAndGet(chargeForIteration);
             });
 
-        System.out.println("\n" + totalCharge.get());
-
         ImeiRegisterResultDTO regDto = new ImeiRegisterResultDTO();
         regDto.setMessage("Batch Inserted Successfully");
         regDto.setPaidStatus("UnPaid");
